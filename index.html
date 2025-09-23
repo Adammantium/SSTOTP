@@ -84,18 +84,21 @@
 				<i class="key icon"></i>
 				Enter your TOTP Token below
 			</div>
-			<div class="inline">
-				<div class="ui left icon input">
-					<input type="text" id="tokentosubmit" placeholder="Token...">
-					<i class="key icon"></i>
-				</div>
-				<button onclick="submit();" class="ui button">Submit</button>
+			<div class="ui left icon input">
+				<input type="text" id="tokenname" placeholder="Name... (Optional)">
+				<i class="pen square icon"></i>
 			</div>
+			<div class="ui left icon input">
+				<input type="text" id="tokentosubmit" placeholder="Token...">
+				<i class="key icon"></i>
+			</div>
+			<button onclick="submit();" class="ui button">Submit</button>
 		</div>
 	</div>
 	
 	<div id="tokenshow" class='center' style="text-align: center;" >
 		<div class="ui placeholder segment">
+			<span id="namedisplay"></span>
 			<h1 id="totp">--- ---</h1>
 			<div class="ui active indicating progress" id="timeleftprogress">
 				<div class="bar"></div>
@@ -117,11 +120,13 @@
 	function submit() {
 		var url = new URL(window.location.href);
 		url.searchParams.set("token", document.getElementById("tokentosubmit").value);
+		url.searchParams.set("name", document.getElementById("tokenname").value);
 		window.location.href = url;
 	}
 	function reset() {
 		var url = new URL(window.location.href);
 		url.searchParams.set("token", "");
+		url.searchParams.set("name", "");
 		window.location.href = url;
 	}
 
@@ -267,6 +272,7 @@
 
 	var url = new URL(window.location.href);
 	var token = url.searchParams.get("token");
+	var name = url.searchParams.get("name");
 	
 	if(token) {
 		document.getElementById("tokenenter").style.display = "none";
@@ -275,6 +281,7 @@
 		document.getElementById("tokenenter").style.display = "";
 		document.getElementById("tokenshow").style.display = "none";
 	}
+	document.getElementById("namedisplay").innerText = name;
 	
 	var timeStamp = Date.now() / 1000; 
 	var lastTimeCounter = 0;
@@ -306,6 +313,7 @@
 
 <script>
 	var href = `javascript:(async function() {
+		const name = "NAMEEEE";
 		const token = "QWERTY";
 		var interval = 30;
 		async function generateTOTP( base32Secret = "QWERTY", interval = 30,length = 6, algorithm = "SHA-1" ) {
@@ -387,8 +395,11 @@
 			
 			ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 			
-			ctx.font = 'bold 10px sans-serif';
+			ctx.font = 'bold 20px sans-serif';
 			
+			ctx.fillText(name, canvas.width / 2, canvas.height / 2 - 40);
+			
+			ctx.font = 'bold 10px sans-serif';
 			var timeStamp = Date.now() / 1000;
 			var progress = Math.round(30 - timeStamp % 30) / 30;
 			ctx.fillText(Math.round(progress * 30), canvas.width / 2, canvas.height / 2 + 37);
@@ -427,7 +438,8 @@
 		}
 	})();`;
 	
-	document.getElementById("booklet").href = href.replaceAll("QWERTY", token);
+	document.getElementById("booklet").href = href.replaceAll("QWERTY", token).replaceAll("NAMEEEE", name);
+	document.getElementById("booklet").innerText = name ? name : "TOTP";
 	
     const startBtn = document.getElementById('startBtn');
 
