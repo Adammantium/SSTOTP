@@ -8,6 +8,11 @@
 	<link rel="icon" type="image/png" sizes="16x16" href="img/favicon/favicon-16x16.png">
 	<link rel="manifest" href="img/favicon/site.webmanifest">
 	
+	<link rel="stylesheet" type="text/css" href="css/semantic.min.css">
+	<link rel="stylesheet" type="text/css" href="css/icon.min.css">
+	<script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+	<script src="js/semantic.min.js"></script>
+	
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
@@ -39,10 +44,6 @@
 			width: 500px;
 			height: 300px;
 			margin: auto;
-			border: 1px solid gray;
-			border-radius: 3px;
-			box-shadow: gray 5px 5px 11px 2px;
-			text-align: center;
 		}
 		a.me {
 			display: inline-block;
@@ -57,24 +58,57 @@
 			vertical-align: middle;
 			text-decoration: none;
 		}
+		
+		.title-header {
+			display: inline;
+			top: 50px;
+			right: 0;
+			left: 0;
+			position: absolute;
+			margin: auto;
+			vertical-align: middle;
+			text-align: center;
+		}
 	</style>
 
 </head>
 <body>
-	<div class='center'>
-		<div id="tokenenter" style="display:none;" >
-			<h3>Token:</h3>
-			<input type="text" id="tokentosubmit" />
-			<button onclick="submit();">Submit</button>
-		</div>
-		<div id="tokenshow">
-			<h1 id="totp">--- ---</h1>
-			<h3 id="timeleft"></h3>
+	<div class='title-header'>
+		<img style="width: 150px; height: 150px;" src="img/logo.png" />
+		<h1>Super Simple TOTP</h1>
+	</div>
 
-			Drag <a class='me' id="booklet">Me</a> to your bookmarks toolbar.
+	<div id="tokenenter" class='center' style="display:none;" >
+		<div class="ui placeholder segment">
+			<div class="ui icon header">
+				<i class="key icon"></i>
+				Enter your TOTP Token below
+			</div>
+			<div class="inline">
+				<div class="ui left icon input">
+					<input type="text" id="tokentosubmit" placeholder="Token...">
+					<i class="key icon"></i>
+				</div>
+				<button onclick="submit();" class="ui button">Submit</button>
+			</div>
+		</div>
+	</div>
+	
+	<div id="tokenshow" class='center' style="text-align: center;" >
+		<div class="ui placeholder segment">
+			<h1 id="totp">--- ---</h1>
+			<div class="ui active indicating progress" id="timeleftprogress">
+				<div class="bar"></div>
+				<div class="label" id='timeleft'></div>
+			</div>
+			
+			Drag <a class='ui blue button' id="booklet">Me</a> to your bookmarks toolbar.
 			<br />
 			<br />
-			<button onclick="reset();">Reset</button>
+			<button class="ui labeled basic icon button" onclick="reset();">
+				<i class="undo icon"></i>
+				Reset
+			</button>
 		</div>
 	</div>
 
@@ -250,6 +284,7 @@
 		( async () => {
 			var timeStamp = Date.now() / 1000; 
 			document.getElementById("timeleft").innerHTML = Math.round(30 - timeStamp % 30);
+			$('#timeleftprogress').progress({ percent: (Math.round(30 - timeStamp % 30) / 30) * 100 });
 			if(Math.floor( timeStamp / interval ) != lastTimeCounter) {
 				lastTimeCounter = Math.floor( timeStamp / interval );
 				current_code = await generateTOTP( token, 30, 6, "SHA-1" );
