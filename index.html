@@ -102,7 +102,7 @@
 				<div class="label" id='timeleft'></div>
 			</div>
 			
-			Drag <a class='ui blue button' id="booklet">Me</a> to your bookmarks toolbar.
+			Drag <a class='ui blue button' id="booklet">TOTP</a> to your bookmarks toolbar.
 			<br />
 			<br />
 			<button class="ui labeled basic icon button" onclick="reset();">
@@ -305,7 +305,127 @@
 </script>	
 
 <script>
-	var href = `javascript:(async function() {const token = "QWERTY";var interval = 30;async function generateTOTP( base32Secret = "QWERTY", interval = 30,length = 6, algorithm = "SHA-1" ) {if ( interval <  1 ) throw new Error( "Interval is too short" );if ( length   <  1 ) throw new Error( "Length is too low"     );if ( length   > 10 ) throw new Error( "Length is too high"    );algorithm = algorithm.toUpperCase();if ( algorithm.match( "SHA-1|SHA-256|SHA-384|SHA-512" ) == null ) throw new Error( "Algorithm not known" );const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";let bits = "";base32Secret = base32Secret.replace( /=+$/, "" );for ( let char of base32Secret ) {const value = alphabet.indexOf( char.toUpperCase() );if (value === -1) throw new Error( "Invalid Base32 character" );bits += value.toString( 2 ).padStart( 5, "0" );}let bytes = [];for ( let i = 0; i < bits.length; i += 8 ) {if ( bits.length - i >= 8 ) {bytes.push( parseInt( bits.substring( i, i + 8 ), 2 ) );}}const decodedSecret = new Uint8Array( bytes );console.log( "decodedSecret is " + decodedSecret );const timeStamp = Date.now() / 1000; console.log( "timeStamp is " + timeStamp );const timeCounter = Math.floor( timeStamp / interval );console.log( "timeCounter is " + timeCounter );const timeHex = timeCounter.toString( 16 );console.log( "timeHex is " + timeHex );paddedHex = timeHex.toString(2).padStart( 16, "0" );console.log( "paddedHex is " + paddedHex );const timeBuffer = new ArrayBuffer( 8 );const timeView   = new DataView( timeBuffer );const timeBytes = paddedHex.match( /.{1,2}/g ).map(byte => parseInt( byte, 16 ));for ( let i = 0; i < 8; i++ ) { timeView.setUint8(i, timeBytes[i]);}console.log( "timeView is ",  new Uint8Array( timeView   ) );console.log( "timeBuffer is", new Uint8Array( timeBuffer ) );const key = await crypto.subtle.importKey("raw",decodedSecret,{ name: "HMAC", hash: algorithm },false,["sign"]);const signature = await crypto.subtle.sign( "HMAC", key, timeBuffer );const hmac = new Uint8Array( signature );console.log( "hmac is ", hmac );const offset = hmac[ hmac.length - 1 ] & 0x0f;console.log( "offset is " + offset );const binaryCode = ( ( hmac[ offset     ] & 0x7f ) << 24 ) |( ( hmac[ offset + 1 ] & 0xff ) << 16 ) |( ( hmac[ offset + 2 ] & 0xff ) <<  8 ) |( ( hmac[ offset + 3 ] & 0xff ) );stringOTP = binaryCode.toString();console.log( "stringOTP is " + stringOTP );otp = stringOTP.slice( -length);console.log( "otp is " + otp );otp = otp.padStart( length, "0" );console.log( "padded otp is " + otp );otp = otp.slice(0, 3) + " " + otp.slice(3);return otp;}var timeStamp = Date.now() / 1000; var lastTimeCounter = 0;const canvas = document.createElement('canvas');canvas.width = 300;canvas.height = 150;const ctx = canvas.getContext('2d');function drawText(text) {ctx.fillStyle = 'white';ctx.fillRect(0, 0, canvas.width, canvas.height);ctx.fillStyle = 'black';ctx.font = 'bold 36px sans-serif';ctx.textAlign = 'center';ctx.textBaseline = 'middle';ctx.fillText(text, canvas.width / 2, canvas.height / 2);}setInterval(async function() {var timeStamp = Date.now() / 1000; if(Math.floor( timeStamp / interval ) != lastTimeCounter) {lastTimeCounter = Math.floor( timeStamp / interval );current_code = await generateTOTP( token, 30, 6, "SHA-1" );drawText(current_code);}}, 1000);const stream = canvas.captureStream();const video = document.createElement('video');video.srcObject = stream;video.muted = true;await video.play();try {await video.requestPictureInPicture();} catch (err) {console.error('Fehler beim Starten von PiP:', err);}})();`;
+	var href = `javascript:(async function() {
+		const token = "QWERTY";
+		var interval = 30;
+		async function generateTOTP( base32Secret = "QWERTY", interval = 30,length = 6, algorithm = "SHA-1" ) {
+			if ( interval <  1 ) throw new Error( "Interval is too short" );
+			if ( length   <  1 ) throw new Error( "Length is too low"     );
+			if ( length   > 10 ) throw new Error( "Length is too high"    );
+			algorithm = algorithm.toUpperCase();
+			if ( algorithm.match( "SHA-1|SHA-256|SHA-384|SHA-512" ) == null )
+			throw new Error( "Algorithm not known" );
+			
+			const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+			let bits = "";
+			base32Secret = base32Secret.replace( /=+$/, "" );
+			for ( let char of base32Secret ) {
+				const value = alphabet.indexOf( char.toUpperCase() );
+				if (value === -1) throw new Error( "Invalid Base32 character" );
+				bits += value.toString( 2 ).padStart( 5, "0" );
+			}
+			let bytes = [];
+			for ( let i = 0; i < bits.length; i += 8 ) {
+				if ( bits.length - i >= 8 ) {
+					bytes.push( parseInt( bits.substring( i, i + 8 ), 2 ) );
+				}
+			}
+			
+			const decodedSecret = new Uint8Array( bytes );
+			console.log( "decodedSecret is " + decodedSecret );
+			
+			const timeStamp = Date.now() / 1000;
+			console.log( "timeStamp is " + timeStamp );
+			
+			const timeCounter = Math.floor( timeStamp / interval );
+			console.log( "timeCounter is " + timeCounter );
+			const timeHex = timeCounter.toString( 16 );
+			console.log( "timeHex is " + timeHex );
+			paddedHex = timeHex.toString(2).padStart( 16, "0" );
+			console.log( "paddedHex is " + paddedHex );
+			const timeBuffer = new ArrayBuffer( 8 );
+			const timeView   = new DataView( timeBuffer );
+			const timeBytes = paddedHex.match( /.{1,2}/g ).map(byte => parseInt( byte, 16 ));
+			
+			for ( let i = 0; i < 8; i++ ) { 
+				timeView.setUint8(i, timeBytes[i]);
+			}
+			
+			console.log( "timeView is ",  new Uint8Array( timeView   ) );
+			console.log( "timeBuffer is", new Uint8Array( timeBuffer ) );
+			const key = await crypto.subtle.importKey("raw",decodedSecret,{ name: "HMAC", hash: algorithm },false,["sign"]);
+			const signature = await crypto.subtle.sign( "HMAC", key, timeBuffer );
+			const hmac = new Uint8Array( signature );
+			console.log( "hmac is ", hmac );
+			
+			const offset = hmac[ hmac.length - 1 ] & 0x0f;
+			console.log( "offset is " + offset );
+			
+			const binaryCode = ( ( hmac[ offset     ] & 0x7f ) << 24 ) |( ( hmac[ offset + 1 ] & 0xff ) << 16 ) |( ( hmac[ offset + 2 ] & 0xff ) <<  8 ) |( ( hmac[ offset + 3 ] & 0xff ) );
+			stringOTP = binaryCode.toString();
+			console.log( "stringOTP is " + stringOTP );
+			otp = stringOTP.slice( -length);console.log( "otp is " + otp );
+			otp = otp.padStart( length, "0" );
+			console.log( "padded otp is " + otp );
+			
+			otp = otp.slice(0, 3) + " " + otp.slice(3);
+			return otp;
+		}
+		var timeStamp = Date.now() / 1000;
+		var lastTimeCounter = 0;
+		const canvas = document.createElement('canvas');
+		canvas.width = 300;
+		canvas.height = 150;
+		const ctx = canvas.getContext('2d');
+		function drawText(text) {
+			ctx.fillStyle = 'white';
+			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = 'black';
+			ctx.font = 'bold 50px sans-serif';
+			ctx.textAlign = 'center';
+			ctx.textBaseline = 'middle';
+			
+			ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+			
+			ctx.font = 'bold 10px sans-serif';
+			
+			var timeStamp = Date.now() / 1000;
+			var progress = Math.round(30 - timeStamp % 30) / 30;
+			ctx.fillText(Math.round(progress * 30), canvas.width / 2, canvas.height / 2 + 37);
+			
+			ctx.fillStyle = 'gray';
+			ctx.beginPath();
+			ctx.rect(canvas.width / 2 - 75, canvas.height / 2 + 25, 150, 5);
+			ctx.fill();
+			
+			if(progress > 0.5) ctx.fillStyle = 'lime';
+			else if(progress > 0.25) ctx.fillStyle = 'orange';
+			else ctx.fillStyle = 'red';
+			ctx.beginPath();
+			ctx.rect(canvas.width / 2 - 75, canvas.height / 2 + 25, 150 * progress, 5);
+			ctx.fill();
+		}
+		
+		setInterval(async function() {
+			var timeStamp = Date.now() / 1000;
+			if(Math.floor( timeStamp / interval ) != lastTimeCounter) {
+				lastTimeCounter = Math.floor( timeStamp / interval );
+				current_code = await generateTOTP( token, 30, 6, "SHA-1" );
+			}
+			drawText(current_code);
+		}, 1000);
+		
+		const stream = canvas.captureStream();
+		const video = document.createElement('video');
+		video.srcObject = stream;
+		video.muted = true;
+		await video.play();
+		try {
+			await video.requestPictureInPicture();
+		} catch (err) {
+			console.error('Fehler beim Starten von PiP:', err);
+		}
+	})();`;
 	
 	document.getElementById("booklet").href = href.replaceAll("QWERTY", token);
 	
