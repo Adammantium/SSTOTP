@@ -20,3 +20,6 @@ Now you can either:
 | Edge    |  ✅  |   ✅       |
 | Chrome  |  ✅  |   ✅       |
 | Firefox |  ✅  |   ❌       |
+
+
+Based on TOTP Web Crypto Code by [Terence Eden](https://shkspr.mobi/blog/2025/03/using-the-web-crypto-api-to-generate-totp-codes-in-javascript-without-3rd-party-libraries/)
