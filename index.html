@@ -69,6 +69,26 @@
 			vertical-align: middle;
 			text-align: center;
 		}
+		.field {
+			clear: both;
+			margin: 0em 0em 1em;
+		}
+		
+		#totp1 {
+			padding-right: 20px;
+		}
+		#totp1, #totp2 {
+			display: inline-block;
+			box-sizing: unset;
+			font-size: 100px;
+			line-height: normal;
+			font-weight: bold;
+		}
+		.totp {
+			margin-block-start: 10px;
+			margin-block-end: 5px;
+			height: 100px;
+		}
 	</style>
 
 </head>
@@ -84,22 +104,30 @@
 				<i class="key icon"></i>
 				Enter your TOTP Token below
 			</div>
-			<div class="ui left icon input">
-				<input type="text" id="tokenname" placeholder="Name... (Optional)">
-				<i class="pen square icon"></i>
+			<div class="field">
+				<div class="ui left icon input">
+					<input type="text" id="tokenname" placeholder="Name... (Optional)">
+					<i class="pen square icon"></i>
+				</div>
 			</div>
-			<div class="ui left icon input">
-				<input type="text" id="tokentosubmit" placeholder="Token...">
-				<i class="key icon"></i>
+			<div class="field">
+				<div class="ui left icon input">
+					<input type="text" id="tokentosubmit" placeholder="Token...">
+					<i class="key icon"></i>
+				</div>
 			</div>
-			<button onclick="submit();" class="ui button">Submit</button>
+			<div class="field">
+				<button onclick="submit();" class="ui button">Submit</button>
+			</div>
 		</div>
 	</div>
 	
 	<div id="tokenshow" class='center' style="text-align: center;" >
 		<div class="ui placeholder segment">
 			<span id="namedisplay"></span>
-			<h1 id="totp">--- ---</h1>
+			<div class='totp'>
+				<span id="totp1">---</span><span id="totp2">---</span>
+			</div>
 			<div class="ui active indicating progress" id="timeleftprogress">
 				<div class="bar"></div>
 				<div class="label" id='timeleft'></div>
@@ -264,7 +292,7 @@
 		otp = otp.padStart( length, "0" );
 		console.log( "padded otp is " + otp );
 		
-		otp = otp.slice(0, 3) + " " + otp.slice(3);
+		//otp = otp.slice(0, 3) + " " + otp.slice(3);
 		
 		//  All done!
 		return otp;
@@ -295,7 +323,8 @@
 			if(Math.floor( timeStamp / interval ) != lastTimeCounter) {
 				lastTimeCounter = Math.floor( timeStamp / interval );
 				current_code = await generateTOTP( token, 30, 6, "SHA-1" );
-				document.getElementById("totp").innerHTML = current_code;
+				document.getElementById("totp1").innerHTML = current_code.slice(0, 3);
+				document.getElementById("totp2").innerHTML = current_code.slice(3);
 				if(pip_display) {
 					pip_display.fillStyle = 'white';
 					pip_display.fillRect(0, 0, canvas.width, canvas.height);
