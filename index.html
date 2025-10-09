@@ -415,9 +415,16 @@
 		canvas.height = 150;
 		const ctx = canvas.getContext('2d');
 		function drawText(text) {
-			ctx.fillStyle = 'white';
+			var background_color = 'white';
+			var foreground_color = 'black';
+			if(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+				background_color = 'black';
+				foreground_color = 'white';
+			}
+
+			ctx.fillStyle = background_color;
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
-			ctx.fillStyle = 'black';
+			ctx.fillStyle = foreground_color;
 			ctx.font = 'bold 50px sans-serif';
 			ctx.textAlign = 'center';
 			ctx.textBaseline = 'middle';
