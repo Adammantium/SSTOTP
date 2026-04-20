@@ -175,7 +175,7 @@
 <script>
 	function submit() {
 		var url = new URL(window.location.href);
-		url.searchParams.set("token", document.getElementById("tokentosubmit").value);
+		url.searchParams.set("token", document.getElementById("tokentosubmit").value.replaceAll(" ", ""));
 		url.searchParams.set("name", document.getElementById("tokenname").value);
 		window.location.href = url;
 	}
@@ -331,6 +331,7 @@
 	var name = url.searchParams.get("name");
 	
 	if(token) {
+		document.title = name;
 		document.getElementById("tokenenter").style.display = "none";
 		document.getElementById("tokenshow").style.display = "";
 	}else{
